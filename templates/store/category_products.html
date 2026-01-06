@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid" style="margin-top: 50px;">
+  <div class="row">
+
+    <!-- VERTICAL NAVBAR (Sidebar) -->
+    <div class="col-lg-2 order-1 pl-4 border-right" style="min-height: 80vh;">
+      <h5 class="text-uppercase mb-4 mt-3 font-weight-bold text-primary" style="letter-spacing: 1px;">Categories</h5>
+
+      <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
+        <a class="nav-link mb-2 font-weight-bold text-dark" href="{% url 'store:shop' %}"
+          style="border-radius: 5px; transition: all 0.2s;">
+          <i class="fas fa-th-large mr-2 text-muted"></i> All Products
+        </a>
+
+        {% if categories %}
+        {% for c in categories %}
+        <a class="nav-link mb-1 {% if category == c %}active font-weight-bold{% else %}text-dark{% endif %}"
+          href="{% url 'store:category-products' c.slug %}" style="border-radius: 5px; transition: all 0.2s;">
+          <i class="fas fa-angle-right mr-2 {% if category == c %}{% else %}text-muted{% endif %}"></i> {{ c.title }}
+        </a>
+        {% endfor %}
+        {% endif %}
+      </div>
+
+      <div class="mt-5">
+        <h6 class="text-uppercase mb-3 font-weight-bold text-primary">Filters</h6>
+        <!-- Price Range Placeholder -->
+        <div class="p-3 bg-light rounded">
+          <label for="customRange1" class="form-label small text-muted">Price Range</label>
+          <input type="range" class="form-control-range" id="customRange1">
+          <div class="d-flex justify-content-between text-muted small mt-2">
+            <span>₹0</span>
+            <span>₹1000+</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN PRODUCT AREA -->
+    <div class="col-lg-10 order-2 px-5">
+
+      <!-- Toolbox -->
+      <div class="row mb-4 align-items-center bg-white p-3 shadow-sm rounded border">
+        <div class="col-lg-6">
+          <h1 class="h4 text-uppercase mb-0 font-weight-bold text-primary">{{ category.title }}</h1>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-transparent p-0 mb-0 small">
+              <li class="breadcrumb-item"><a href="{% url 'store:home' %}" class="text-muted">Home</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'store:shop' %}" class="text-muted">Shop</a></li>
+              <li class="breadcrumb-item active text-primary" aria-current="page">{{ category.title }}</li>
+            </ol>
+          </nav>
+        </div>
+        <div class="col-lg-6 text-lg-right">
+          <span class="text-muted small mr-3">{{ products.count }} results found</span>
+          <select class="selectpicker border rounded px-3 py-2 text-muted bg-light" name="sorting">
+            <option value="default">Default sorting</option>
+            <option value="popularity">Popularity</option>
+            <option value="low-high">Price: Low to High</option>
+            <option value="high-low">Price: High to Low</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Product Grid -->
+      <div class="row">
+        {% if products %}
+        {% for p in products %}
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+          <div class="card h-100 border-0 shadow-sm product-card" style="transition: all 0.3s;">
+            <div class="position-relative overflow-hidden" style="height: 250px; background: #f8f9fa;">
+
+              <a href="{% url 'store:product-detail' p.slug %}" class="d-block h-100">
+                {% if p.product_image %}
+                <img class="img-fluid h-100 w-100 object-fit-cover" src="{{ p.product_image.url }}" alt="{{ p.title }}"
+                  style="object-fit: cover;" loading="lazy">
+                {% else %}
+                <img class="img-fluid h-100 w-100 object-fit-cover" src="{% static 'img/product-1.jpg' %}"
+                  alt="{{ p.title }}" style="object-fit: cover;" loading="lazy">
+                {% endif %}
+              </a>
+
+              <!-- Hover Actions -->
+              <div
+                class="product-overlay position-absolute w-100 h-100 d-flex align-items-center justify-content-center"
+                style="top: 0; left: 0; background: rgba(255,255,255,0.8); opacity: 0; transition: opacity 0.3s;">
+                <ul class="list-inline mb-0">
+                  <li class="list-inline-item mr-2">
+                    <a class="btn btn-primary btn-sm rounded-circle" href="{% url 'store:product-detail' p.slug %}"
+                      data-toggle="tooltip" title="View"><i class="fas fa-eye"></i></a>
+                  </li>
+                  <li class="list-inline-item">
+                    <form action="{% url 'store:add-to-cart' %}">
+                      <input type="hidden" name="prod_id" value="{{p.id}}" id="product_id">
+                      <button type="submit" class="btn btn-outline-primary btn-sm rounded-circle" data-toggle="tooltip"
+                        title="Add to Cart"><i class="fas fa-shopping-cart"></i></button>
+                    </form>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card-body p-3 text-center">
+              <h6 class="mb-1">
+                <a class="text-reset font-weight-bold" href="{% url 'store:product-detail' p.slug %}">{{ p.title }}</a>
+              </h6>
+              <p class="small text-muted mb-0">₹{{ p.price }}</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12 text-center py-5">
+          <i class="fas fa-search fa-3x text-muted mb-3"></i>
+          <h3 class="text-muted">No products found in this category.</h3>
+          <a href="{% url 'store:shop' %}" class="btn btn-primary mt-3">Browse All Products</a>
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .product-card:hover .product-overlay {
+    opacity: 1 !important;
+  }
+
+  .nav-pills .nav-link.active {
+    background-color: rgba(0, 80, 157, 0.1);
+    color: #00509d;
+  }
+
+  .nav-pills .nav-link:hover:not(.active) {
+    background-color: #f8f9fa;
+    color: #00509d;
+    padding-left: 20px;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const sortSelect = document.querySelector('select[name="sorting"]');
+    if (sortSelect) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentSort = urlParams.get('sorting');
+      if (currentSort) {
+        sortSelect.value = currentSort;
+      }
+
+      sortSelect.addEventListener('change', function () {
+        const url = new URL(window.location.href);
+        url.searchParams.set('sorting', this.value);
+        window.location.href = url.toString();
+      });
+    }
+  });
+</script>
+
+
+{% endblock content %}

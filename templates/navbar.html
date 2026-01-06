@@ -1,0 +1,227 @@
+{% load static %}
+
+<!-- Single Line Responsive Navbar with Glass Effect -->
+<header class="header sticky-top glass-navbar"
+  style="border-bottom: 1px solid rgba(255, 255, 255, 0.2); min-height: 80px; display: flex; align-items: center;">
+  <div class="container-fluid px-3 px-lg-4">
+    <nav class="navbar navbar-expand-lg navbar-light py-0 px-0 d-flex justify-content-between">
+
+
+
+      <!-- Brand - FORCED LEFT -->
+      <a class="navbar-brand d-flex align-items-center mr-3" href="{% url 'store:home' %}"
+        style="display: flex; align-items: center; position: relative !important; left: auto !important; transform: none !important; text-decoration: none;">
+        <img src="{% static 'img/logo_v4.png' %}" alt="JewelsFair" style="height: 75px; width: auto;">
+        <span
+          style="font-size: 26px; font-weight: 700; text-transform: uppercase; color: #333; margin-left: 15px; font-family: 'Playfair Display', serif; letter-spacing: 1px;">Jewels<span
+            style="color: #00509d;">Fair</span></span>
+      </a>
+
+      <!-- Toggler for Mobile -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+        style="border: none;">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Collapse Content -->
+      <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+
+        <!-- Search Bar -->
+        <form action="{% url 'store:search' %}" method="get"
+          class="form-inline mx-lg-4 my-2 my-lg-0 shadows-sm position-relative" style="flex: 0 1 500px;">
+          <div class="input-group w-100 round-search">
+            <input class="form-control border-right-0" type="search" name="q" id="search-input"
+              placeholder="Search jewelry..." aria-label="Search" autocomplete="off"
+              style="border-radius: 30px 0 0 30px; border-color: #00509d; background: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div class="input-group-append">
+              <button class="btn border-left-0" type="submit"
+                style="border-radius: 0 30px 30px 0; background-color: #ffffff; border-color: #00509d; color: #00509d; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><i
+                  class="fas fa-search"></i></button>
+            </div>
+          </div>
+          <!-- Search Suggestions Dropdown -->
+          <div id="search-suggestions" class="position-absolute w-100 bg-white shadow-lg rounded mt-2 overflow-hidden"
+            style="top: 100%; left: 0; z-index: 1000; display: none; border: 1px solid rgba(0,0,0,0.1);">
+          </div>
+        </form>
+
+        <!-- Navigation Links -->
+        <ul class="navbar-nav align-items-center">
+
+          <!-- Collections (Direct Link) -->
+          <li class="nav-item">
+            <a class="nav-link nav-item-highlight text-dark font-weight-bold text-uppercase px-3 py-2 mx-1"
+              href="{% url 'store:shop' %}" style="font-size: 13px; border-radius: 20px;">
+              Collections
+            </a>
+          </li>
+
+          <!-- New Arrivals -->
+          <li class="nav-item">
+            <a class="nav-link nav-item-highlight text-dark font-weight-bold text-uppercase px-3 py-2 mx-1"
+              href="{% url 'store:shop' %}" style="font-size: 13px; border-radius: 20px;">New Arrivals</a>
+          </li>
+
+          <!-- Account & Cart -->
+          <li class="nav-item dropdown ml-lg-3">
+            <a class="nav-link text-dark" href="#" id="accountDropdown" role="button" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-user-circle fa-lg text-primary"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right border-0 shadow-lg glass-dropdown"
+              aria-labelledby="accountDropdown">
+              {% if request.user.is_authenticated %}
+              <h6 class="dropdown-header text-primary">Hi, {{ request.user.first_name }}</h6>
+              <a class="dropdown-item" href="{% url 'store:profile' %}">Profile</a>
+              <a class="dropdown-item" href="{% url 'store:orders' %}">Orders</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{% url 'store:logout' %}">Log Out</a>
+              {% else %}
+              <a class="dropdown-item" href="{% url 'store:login' %}">Sign In</a>
+              <a class="dropdown-item" href="{% url 'store:register' %}">Create Account</a>
+              {% endif %}
+            </div>
+          </li>
+
+          <li class="nav-item ml-lg-2">
+            <a class="nav-link text-dark position-relative" href="{% url 'store:cart' %}">
+              <i class="fas fa-shopping-bag fa-lg"></i>
+              <span class="badge badge-pill badge-primary position-absolute"
+                style="top: -2px; right: -5px; font-size: 10px;">{{cart_items.count|default:"0"}}</span>
+            </a>
+          </li>
+
+        </ul>
+      </div>
+    </nav>
+  </div>
+</header>
+<style>
+  /* Glassmorphism Styles */
+  .glass-navbar {
+    background: rgba(255, 255, 255, 0.25) !important;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .glass-dropdown {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  /* Navbar Tweaks */
+  .navbar-brand {
+    margin-right: 2rem !important;
+    /* Ensure spacing from search */
+  }
+
+  .navbar-nav .nav-link {
+    transition: color 0.3s;
+    letter-spacing: 0.5px;
+  }
+
+  .navbar-nav .nav-link:hover {
+    color: #00509d !important;
+  }
+
+  .input-group.round-search input::placeholder {
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 991px) {
+    .navbar-collapse {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      padding: 20px;
+      border-radius: 0 0 15px 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  /* Search Suggestion Styles */
+  .suggestion-item {
+    transition: background-color 0.2s;
+  }
+
+  .suggestion-item:hover {
+    background-color: #f8f9fa;
+  }
+
+  /* Nav Item Highlight */
+  .nav-item-highlight {
+    transition: all 0.3s ease;
+  }
+
+  .nav-item-highlight:hover {
+    background-color: rgba(0, 80, 157, 0.1);
+    color: #00509d !important;
+    transform: translateY(-2px);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('search-input');
+    const suggestionsBox = document.getElementById('search-suggestions');
+    let timeout = null;
+
+    if (searchInput) {
+      searchInput.addEventListener('input', function () {
+        const query = this.value;
+        if (timeout) clearTimeout(timeout);
+
+        if (query.length < 2) {
+          suggestionsBox.style.display = 'none';
+          return;
+        }
+
+        timeout = setTimeout(() => {
+          fetch(`{% url 'store:search-suggestions' %}?term=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+              suggestionsBox.innerHTML = '';
+              if (data.length > 0) {
+                data.forEach(item => {
+                  const div = document.createElement('div');
+                  div.className = 'suggestion-item p-2 border-bottom cursor-pointer d-flex align-items-center';
+                  div.style.cursor = 'pointer';
+                  div.onclick = function () {
+                    window.location.href = `/product/${item.slug}/`;
+                  };
+
+                  let imgHtml = '';
+                  if (item.image) {
+                    imgHtml = `<img src="${item.image}" alt="${item.label}" class="mr-2 rounded" style="width: 40px; height: 40px; object-fit: cover;">`;
+                  }
+
+                  div.innerHTML = `
+                    ${imgHtml}
+                    <div>
+                      <div class="font-weight-bold text-dark" style="font-size: 14px;">${item.label}</div>
+                    </div>
+                  `;
+                  suggestionsBox.appendChild(div);
+                });
+                suggestionsBox.style.display = 'block';
+              } else {
+                suggestionsBox.style.display = 'none';
+              }
+            });
+        }, 300);
+      });
+
+      // Hide suggestions when clicking outside
+      document.addEventListener('click', function (e) {
+        if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+          suggestionsBox.style.display = 'none';
+        }
+      });
+    }
+  });
+</script>

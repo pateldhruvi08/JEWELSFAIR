@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<div class="container py-5">
+  <!-- Hero / Header -->
+  <section class="py-5 bg-light mb-5">
+    <div class="container">
+      <div class="row px-4 px-lg-5 py-lg-4 align-items-center">
+        <div class="col-lg-6">
+          <h1 class="h2 text-uppercase mb-0">Your Orders</h1>
+        </div>
+        <div class="col-lg-6 text-lg-right">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-lg-end mb-0 px-0">
+              <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Orders</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card border-0 rounded shadow-sm">
+        <div class="card-header bg-white border-bottom">
+          <h5 class="mb-0 text-primary font-weight-bold text-uppercase">Order History</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="bg-light">
+                <tr>
+                  <th class="border-0 pl-4 py-3" scope="col"><strong class="small text-uppercase">#</strong></th>
+                  <th class="border-0 py-3" scope="col"><strong class="small text-uppercase">Item</strong></th>
+                  <th class="border-0 py-3" scope="col"><strong class="small text-uppercase">Image</strong></th>
+                  <th class="border-0 py-3" scope="col"><strong class="small text-uppercase">Qty</strong></th>
+                  <th class="border-0 py-3" scope="col"><strong class="small text-uppercase">Date</strong></th>
+                  <th class="border-0 pr-4 py-3" scope="col"><strong class="small text-uppercase">Status</strong></th>
+                  <th class="border-0 pr-4 py-3" scope="col"><strong class="small text-uppercase">Action</strong></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if orders %}
+                {% for order in orders %}
+                <tr>
+                  <td class="pl-4 align-middle">{{ forloop.counter }}</td>
+                  <td class="align-middle font-weight-bold">{{ order.product.title }}</td>
+                  <td class="align-middle">
+                    {% if order.product.product_image %}
+                    <img src="{{ order.product.product_image.url }}" alt="{{ order.product.title }}"
+                      class="img-fluid rounded shadow-sm" style="width: 70px; height: 70px; object-fit: cover;">
+                    {% else %}
+                    <img src="{% static 'img/product-1.jpg' %}" alt="Product" class="img-fluid rounded shadow-sm"
+                      style="width: 70px; height: 70px; object-fit: cover;">
+                    {% endif %}
+                  </td>
+                  <td class="align-middle">{{ order.quantity }}</td>
+                  <td class="align-middle text-muted small">{{ order.ordered_date|naturaltime }}</td>
+                  <td class="pr-4 align-middle" style="min-width: 150px;">
+                    <div class="d-flex align-items-center mb-1">
+                      <span class="small font-weight-bold 
+                                                    {% if order.status == 'Cancelled' %}text-danger
+                                                    {% elif order.status == 'Delivered' %}text-success
+                                                    {% else %}text-primary{% endif %}">
+                        {{ order.status }}
+                      </span>
+                    </div>
+
+                    <div class="progress" style="height: 6px;">
+                      {% if order.status == 'Pending' %}
+                      <div class="progress-bar bg-warning" role="progressbar" style="width: 10%" aria-valuenow="10"
+                        aria-valuemin="0" aria-valuemax="100"></div>
+                      {% elif order.status == 'Accepted' %}
+                      <div class="progress-bar bg-info" role="progressbar" style="width: 25%" aria-valuenow="25"
+                        aria-valuemin="0" aria-valuemax="100"></div>
+                      {% elif order.status == 'Packed' %}
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 50%" aria-valuenow="50"
+                        aria-valuemin="0" aria-valuemax="100"></div>
+                      {% elif order.status == 'On The Way' %}
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 75%" aria-valuenow="75"
+                        aria-valuemin="0" aria-valuemax="100"></div>
+                      {% elif order.status == 'Delivered' %}
+                      <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100"
+                        aria-valuemin="0" aria-valuemax="100"></div>
+                      {% elif order.status == 'Cancelled' %}
+                      <div class="progress-bar bg-danger" role="progressbar" style="width: 100%" aria-valuenow="100"
+                        aria-valuemin="0" aria-valuemax="100"></div>
+                      {% endif %}
+                    </div>
+                  </td>
+                  <td class="align-middle">
+                    {% if order.status == 'Pending' or order.status == 'Accepted' %}
+                    <a href="{% url 'store:cancel-order' order.id %}" class="btn btn-outline-danger btn-sm"
+                      onclick="return confirm('Are you sure you want to cancel this order?')">Cancel</a>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                  <td colspan="6" class="text-center py-5">
+                    <p class="text-muted mb-3">You haven't placed any orders yet.</p>
+                    <a href="{% url 'store:shop' %}" class="btn btn-primary shadow-sm btn-sm text-uppercase">Start
+                      Shopping</a>
+                  </td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<div class="container-fluid px-0 hero-container">
+  <div id="heroCarousel" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+      <li data-target="#heroCarousel" data-slide-to="0" class="active"></li>
+      <li data-target="#heroCarousel" data-slide-to="1"></li>
+    </ol>
+    <div class="carousel-inner">
+      <!-- Slide 1 -->
+      <div class="carousel-item active">
+        <div class="d-flex align-items-center"
+          style="background: url({% static 'img/hero-1.png' %}) center center / cover no-repeat; min-height: 50vh; max-height: 600px;">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-6 text-left px-5">
+                <h1 class="display-3 font-weight-bold text-dark d-none d-md-block">Pure Luxury</h1>
+                <h1 class="font-weight-bold text-dark d-block d-md-none">New Season</h1>
+                <p class="lead text-dark">Exquisite Gold & Diamond Collections.</p>
+                <a href="{% url 'store:shop' %}" class="btn btn-primary btn-lg px-5 shadow-sm">Explore Collection</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Slide 2 -->
+      <div class="carousel-item">
+        <div class="d-flex align-items-center"
+          style="background: url({% static 'img/hero-bracelet.png' %}) center center / cover no-repeat; min-height: 50vh; max-height: 600px;">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-6 text-left px-5">
+                <h1 class="display-3 font-weight-bold text-dark d-none d-md-block">Timeless Elegance</h1>
+                <h1 class="font-weight-bold text-dark d-block d-md-none">New Collection</h1>
+                <p class="lead text-dark">Discover our exclusive sapphire and diamond sets.</p>
+                <a href="{% url 'store:shop' %}" class="btn btn-primary btn-lg px-5 shadow-sm">Shop The Look</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="carousel-control-prev" href="#heroCarousel" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#heroCarousel" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+  <!-- Gradient for smooth transition -->
+  <div class="hero-gradient-overlay" style="display:none;"></div>
+</div>
+
+
+<!-- MAIN CONTENT (Clean Grid Layout) -->
+<div class="container mt-4 mb-5">
+
+  <!-- Section 1: Top Cards Grid -->
+  <!-- Categories Grid -->
+  <div class="mb-5">
+    <h3 class="font-weight-bold mb-4 text-center">Shop By Category</h3>
+    <div class="row">
+      {% if categories %}
+      {% for category in categories %}
+      <div class="col-6 col-md-4 col-lg-3 mb-4">
+        <a href="{% url 'store:category-products' category.slug %}" class="text-decoration-none">
+          <div class="card h-100 border-0 shadow-sm category-card" style="transition: transform 0.3s;">
+            <div class="overflow-hidden position-relative rounded" style="height: 250px;">
+              {% if category.category_image %}
+              <img src="{{ category.category_image.url }}" alt="{{ category.title }}" class="img-fluid w-100 h-100"
+                style="object-fit: cover; transition: transform 0.5s;" loading="lazy">
+              {% else %}
+              <img src="{% static 'img/cat-img-1.jpg' %}" alt="{{ category.title }}" class="img-fluid w-100 h-100"
+                style="object-fit: cover; transition: transform 0.5s;" loading="lazy">
+              {% endif %}
+              <div class="category-overlay position-absolute w-100 h-100 d-flex align-items-end p-3"
+                style="top: 0; left: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                <h5 class="text-white font-weight-bold mb-0">{{ category.title }}</h5>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+  <style>
+    .category-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .category-card:hover img {
+      transform: scale(1.1);
+    }
+  </style>
+
+
+  <!-- BEST SELLERS SECTION (Clean Grid Layout) -->
+  <div class="bg-white p-4 mb-4 shadow-sm rounded border">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="font-weight-bold m-0 text-dark">Best Sellers</h3>
+      <a href="{% url 'store:shop' %}" class="amazon-card-link" style="font-size: 14px;">See More</a>
+    </div>
+
+    <div class="row">
+      {% if best_sellers %}
+      {% for product in best_sellers %}
+      <div class="col-6 col-md-3 mb-3">
+        <div class="card border-0 h-100 product-grid-item">
+          <a href="{% url 'store:product-detail' product.slug %}"
+            class="text-decoration-none text-dark h-100 d-flex flex-column">
+            <div class="text-center p-3"
+              style="background: #fff; height: 220px; display: flex; align-items: center; justify-content: center;">
+              {% if product.product_image %}
+              <img src="{{ product.product_image.url }}" alt="{{product.title}}"
+                style="max-height: 180px; max-width: 100%;" loading="lazy">
+              {% else %}
+              <img src="{% static 'img/product-1.jpg' %}" alt="{{product.title}}"
+                style="max-height: 180px; max-width: 100%;" loading="lazy">
+              {% endif %}
+            </div>
+            <div class="card-body p-2 flex-grow-0">
+              <h6 class="text-truncate mb-1" title="{{ product.title }}">{{ product.title }}</h6>
+              <div class="text-warning small mb-1">
+                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                  class="fas fa-star"></i><i class="far fa-star"></i>
+                <span class="text-muted">(120)</span>
+              </div>
+              <h5 class="font-weight-bold mb-0 text-primary">₹{{product.price}}</h5>
+            </div>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+
+  <!-- WEDDING BANNER MIDDLE -->
+  <div class="mb-4 text-center shadow-lg rounded overflow-hidden" style="transition: transform 0.3s;">
+    <div class="p-4 p-md-5 text-white position-relative d-flex align-items-center justify-content-center"
+      style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url({% static 'img/wedding-banner.png' %}) center center / cover no-repeat; min-height: 250px;">
+      <div class="position-relative z-index-1">
+        <h2 class="text-white font-weight-bold">The Wedding Store</h2>
+        <p class="lead mb-4">Timeless jewelry for your perfect moment.</p>
+        <a href="{% url 'store:shop' %}" class="btn btn-outline-light btn-lg px-4 border-2 font-weight-bold">Explore
+          Collection</a>
+      </div>
+      <i class="fas fa-ring position-absolute text-white-50"
+        style="font-size: 15rem; right: -2rem; bottom: -3rem; opacity: 0.1; transform: rotate(-15deg);"></i>
+    </div>
+  </div>
+
+  <!-- NEW ARRIVALS SECTION (Clean Grid Layout) -->
+  <div class="bg-white p-4 mb-4 shadow-sm rounded border">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="font-weight-bold m-0 text-dark">New Arrivals</h3>
+      <a href="{% url 'store:shop' %}" class="amazon-card-link" style="font-size: 14px;">View All</a>
+    </div>
+
+    <div class="row">
+      {% if new_arrivals %}
+      {% for product in new_arrivals %}
+      <div class="col-6 col-md-3 mb-3">
+        <div class="card border-0 h-100 product-grid-item">
+          <a href="{% url 'store:product-detail' product.slug %}"
+            class="text-decoration-none text-dark h-100 d-flex flex-column">
+            <div class="text-center p-3"
+              style="background: #fff; height: 220px; display: flex; align-items: center; justify-content: center;">
+              {% if product.product_image %}
+              <img src="{{ product.product_image.url }}" alt="{{product.title}}"
+                style="max-height: 180px; max-width: 100%;" loading="lazy">
+              {% else %}
+              <img src="{% static 'img/product-1.jpg' %}" alt="{{product.title}}"
+                style="max-height: 180px; max-width: 100%;" loading="lazy">
+              {% endif %}
+            </div>
+            <div class="card-body p-2 flex-grow-0">
+              <h6 class="text-truncate mb-1" title="{{ product.title }}">{{ product.title }}</h6>
+              <!-- No stars for new arrivals to distinguish -->
+              <p class="text-muted small mb-1">Just Launched</p>
+              <h5 class="font-weight-bold mb-0 text-primary">₹{{product.price}}</h5>
+            </div>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- Floating WhatsApp Button -->
+<a href="https://wa.me/919999999999" class="whatsapp-float" target="_blank">
+  <i class="fab fa-whatsapp my-float"></i>
+</a>
+
+{% endblock content %}
